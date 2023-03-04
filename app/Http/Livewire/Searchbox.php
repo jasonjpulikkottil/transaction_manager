@@ -27,6 +27,10 @@ class Searchbox extends Component
                        ->limit(5)
                        ->get();
 
+                       if(empty($this->searchbar)){
+
+                        $this->searchbar ="";
+                       }
              $this->showdiv = true;
          }else{
              $this->showdiv = false;
@@ -50,6 +54,9 @@ class Searchbox extends Component
                 $this->searchqty= $var2 ;
                 
                
+            }else{
+                $this->searchproduct= "" ;
+                $this->searchqty= "" ;
             }
 
 
@@ -65,6 +72,11 @@ class Searchbox extends Component
                       ->limit(1)
                       ->value('description');
           */
+        }
+        else{
+            
+            $this->searchproduct= "" ;
+            $this->searchqty= "" ;
         }
     }
 

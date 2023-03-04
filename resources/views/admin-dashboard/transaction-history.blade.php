@@ -71,7 +71,7 @@
                             @endforeach
 
                         </table>
-
+                        {{ $trn->links() }}
                     </div>
                 </div>
 

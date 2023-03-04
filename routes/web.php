@@ -22,6 +22,10 @@ Route::post('/salesreturn-upload',[TransactionController::class, 'SalesReturnUpl
 
 Route::post('/ajaxinsert',[TransactionController::class, 'AjaxInsert'])->name('ajaxinsert');
 
+Route::post('/stockedit/{no}',[TransactionController::class, 'StockEdit'])->name('stock.edit');
+Route::post('/stockdestroy/{no}',[TransactionController::class, 'StockDestroy'])->name('stock.destroy');
 
+
+//Route::resource('stock',TransactionController::class);
 
 

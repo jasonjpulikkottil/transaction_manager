@@ -22,7 +22,10 @@ class TransactionController extends Controller
         Stock::truncate();
         TransactionHistory::truncate();
         */
-        $stock = DB::table('stock')->get();
+        //$stock = DB::table('stock')->get();
+
+        $stock = Stock::simplePaginate(10);
+
         return view("admin-dashboard/stock")->with('stock', $stock);
     }
 
@@ -36,7 +39,9 @@ class TransactionController extends Controller
     {
 
 
-        $stock = DB::table('stock')->get();
+        // $stock = DB::table('stock')->get();
+
+        $stock = Stock::simplePaginate(10);
         return view("admin-dashboard/sales")->with('stock', $stock);
     }
 
@@ -56,7 +61,10 @@ class TransactionController extends Controller
     {
 
 
-        $trn = DB::table('transactionhistory')->get();
+        //$trn = DB::table('transactionhistory')->get();
+        //$trn = TransactionHistory::simplePaginate(10);
+
+        $trn = TransactionHistory::orderBy('no', 'desc')->simplePaginate(10);
 
         return view("admin-dashboard/transaction-history")->with('trn', $trn);;
     }
@@ -90,7 +98,7 @@ class TransactionController extends Controller
             ]);
         }
 
-
+        $stock = Stock::simplePaginate(10);
 
 
         return view("admin-dashboard/stock")->with(['stock' => $stock]);
@@ -398,7 +406,7 @@ class TransactionController extends Controller
             'inqty' => 'required',
         ]);
 
-       // $noValue = 0;
+        // $noValue = 0;
         $noValue = DB::table('stock')->orderBy('no', 'desc')->value('no');
 
         $noValue += 1;
@@ -441,5 +449,24 @@ class TransactionController extends Controller
             'status' => 'success'
         ]);
         return view("admin-dashboard/stock")->with(['stock' => $stock]);
+    }
+
+
+    public function StockEdit($no)
+    {
+        $stock= Stock::where('no', '=', $no)->first();
+
+        return view("admin-dashboard/editstock")->with(['stock' => $stock]);
+        //return redirect('/');
+    }
+
+    public function StockDestroy($no)
+    {
+        Stock::where('no', '=', $no)->delete();
+
+
+        // $stock = Stock::simplePaginate(10);
+        // return view("admin-dashboard/stock")->with('stock', $stock);
+        return redirect('/');
     }
 }

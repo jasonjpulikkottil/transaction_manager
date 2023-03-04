@@ -7,7 +7,7 @@
                 <input type="text" wire:change="searchempty" wire:model="searchbar" wire:keyup="searchResult2" name="inbarcode" id="inbarcode" class="form-control" placeholder="Barcode">
             </div>
             <div class="col">
-                <input type="text" wire:model="searchproduct" wire:keyup="searchResult" name="instock" id="instock" class="form-control" placeholder="Stock">
+                <input type="text" wire:model="searchproduct" wire:keyup="searchResult" name="instock" id="instock" class="form-control" placeholder="Item">
             </div>
             <div class="col">
                 <input type="number"  wire:model="searchqty" name="inqty" id="inqty" class="form-control" placeholder="Qty" value="1">
