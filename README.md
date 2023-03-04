@@ -1,5 +1,5 @@
 # transaction manager
- PHP Laravel 9 Project
+ PHP Laravel 10 Project
  
 * Admin portal with 5 options
 1. Stock
