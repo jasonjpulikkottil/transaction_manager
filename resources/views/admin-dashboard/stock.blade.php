@@ -84,7 +84,7 @@
             </div>
             <div class="card-body d-flex">
 <div>
-                <table class="table-bordered table-responsive text-center data-table">
+                <table id="tblData" class="table-bordered table-responsive text-center data-table">
                     <tr>
                         <th>No</th>
                         <th>Description of Goods</th>
@@ -96,23 +96,23 @@
                     @foreach ($stock as $key => $data)
 
                     <tr>
-                        <td>
+                        <td class="tdno">
                             {{$data->no}}
                         </td>
-                        <td>
+                        <td class="tditem">
                             {{$data->description}}
                         </td>
-                        <td>
+                        <td class="tdqty">
                             {{$data->qty}}
                         </td>
-                        <td>
+                        <td class="tdbar">
                             {{$data->barcode}}
                         </td>
 
                         <td  class="d-flex flex-fill">
-                           
-                            <button  class="p-1 btn btn-warning btn-sm showDiv" >Edit</button>
-                            
+                           <div  class="p-1">
+                            <button  class="p-1 btn btn-warning btn-sm showDiv btn-edit" >Edit</button>
+</div>
                             <form  class="p-1"method="post" action="{{ url('stockdestroy/'.$data->no) }}">
                                 @csrf
                                 <input type="submit" class="btn btn-danger btn-sm" value="Delete" />
@@ -130,28 +130,7 @@
 </div>
 <div class="m-3">
     
-<div class="card card-primary card-outline"  id="hiddenDiv"  style="display:none;">
-            <div class="card-header">
-                EDIT
-            </div>
-    <form method="post" id="inputform">
-        @csrf
-        <div class="row">
-            <div class="col">
-                <input type="text" name="inbarcode2" id="inbarcode2" class="form-control" placeholder="Barcode" value="">
-            </div>
-            <div class="col">
-                <input type="text"  name="instock2" id="instock2" class="form-control" placeholder="Item" value="">
-            </div>
-            <div class="col">
-                <input type="number" name="inqty2" id="inqty2" class="form-control" placeholder="Qty" value="">
-            </div>
-        </div>
-        <br>
-        <input class="btn btn-primary float-right" value="Save"  id="Save" type="submit">
-    </form>
 
-</div>
 </div>
             </div>
         </div>
@@ -164,15 +143,44 @@
 </div>
 <!-- /.content -->
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $('.showDiv').click(function() {
-            $('#hiddenDiv').toggle();
-        });
-    });
-</script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!--
+NEW
+-->
+<!--
+NEW
+-->
 
+<script>
+      
+        $(document).ready(function () {
+            
+            $('#tblData').on('click', '.btn-edit', function () { 
+                const num =$(this).parent().parent().parent().find(".tdno").html();
+        $(this).parent().parent().parent().find(".tdno").html("<input type='number' value='"+parseInt(num)+"' class='form-control txtno' placeholder='Enter No'/>"); 
+
+                let item =$(this).parent().parent().parent().find(".tditem").html();
+                item = item.replace(/^\s+|\s+$/g, '');
+                $(this).parent().parent().parent().find(".tditem").html("<input type='text' value='"+item+"' class='form-control txtitem' placeholder='Enter Item'/>"); 
+
+                const qty =$(this).parent().parent().parent().find(".tdqty").html();
+               
+                $(this).parent().parent().parent().find(".tdqty").html("<input type='number' value='"+parseInt(qty)+"' class='form-control txtno' placeholder='Enter Qty'/>"); 
+
+
+                let bar =$(this).parent().parent().parent().find(".tdbar").html();
+               bar = bar.replace(/^\s+|\s+$/g, '');
+                $(this).parent().parent().parent().find(".tdbar").html("<input type='text' value='"+bar+"' class='form-control txtitem' placeholder='Enter Barcode'/>"); 
+
+                $(this).parent().html("<button  class='p-1 btn btn-success btn-sm showDiv btn-update' >Update</button>"); 
+console.log($(this).parent().find(".btn-edit"));
+
+
+                
+            });
+        });
+    </script> 
 
 
 @livewireScripts
