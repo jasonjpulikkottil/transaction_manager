@@ -2,10 +2,11 @@
 
 @section('admin-content')
 
-<head> 
+<head>
     @livewireStyles
-<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4iFJnHvroAYC0f4zIwV+nUrKsXlL4WOgIcN4nK3Zg5T0UksdQRVvSvZe3tfukgM+" crossorigin="anonymous">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4iFJnHvroAYC0f4zIwV+nUrKsXlL4WOgIcN4nK3Zg5T0UksdQRVvSvZe3tfukgM+" crossorigin="anonymous">
 
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
 </head>
 
@@ -83,55 +84,63 @@
                 <h5 class="m-0">View Stock Database</h5>
             </div>
             <div class="card-body d-flex">
-<div>
-                <table id="tblData" class="table-bordered table-responsive text-center data-table">
-                    <tr>
-                        <th>No</th>
-                        <th>Description of Goods</th>
-                        <th>Qty</th>
-                        <th>Barcode</th>
+                <div>
+                    <table id="tblData" class="table-bordered table-responsive text-center data-table">
+                        <tr>
+                            <th>No</th>
+                            <th>Description of Goods</th>
+                            <th>Qty</th>
+                            <th>Barcode</th>
+                            <th>Action</th>
 
-                    </tr>
+                        </tr>
 
-                    @foreach ($stock as $key => $data)
+                        @foreach ($stock as $key => $data)
 
-                    <tr>
-                        <td class="tdno">
-                            {{$data->no}}
-                        </td>
-                        <td class="tditem">
-                            {{$data->description}}
-                        </td>
-                        <td class="tdqty">
-                            {{$data->qty}}
-                        </td>
-                        <td class="tdbar">
-                            {{$data->barcode}}
-                        </td>
+                        <tr>
+                            <td class="tdno">
+                                {{$data->no}}
+                            </td>
+                            <td class="tditem">
+                                {{$data->description}}
+                            </td>
+                            <td class="tdqty">
+                                {{$data->qty}}
+                            </td>
+                            <td class="tdbar">
+                                {{$data->barcode}}
 
-                        <td  class="d-flex flex-fill">
-                           <div  class="p-1">
-                            <button  class="p-1 btn btn-warning btn-sm showDiv btn-edit" >Edit</button>
-</div>
-                            <form  class="p-1"method="post" action="{{ url('stockdestroy/'.$data->no) }}">
-                                @csrf
-                                <input type="submit" class="btn btn-danger btn-sm" value="Delete" />
-                            </form>
-                           
+                            </td>
 
-                        </td>
+                            <td class="d-flex flex-fill">
+                                <div class="p-1">
+                                    <button class="p-1 btn btn-warning btn-sm showDiv btn-edit">Edit</button>
+                                </div>
 
-                    </tr>
-                    @endforeach
+                                <div class="p-1">
+                                    <button class="btn btn-danger btn-sm btn-delete">Delete</button>
+                                </div>
 
-                </table>
 
-                {{ $stock->links() }}
-</div>
-<div class="m-3">
-    
+                                <!--form class="p-1" method="post" action="{{ url('stockdestroy/'.$data->no) }}">
+                                    @csrf
+                                    <input type="submit" class="btn btn-danger btn-sm" value="Delete" />
+                                </form-->
 
-</div>
+
+                            </td>
+
+                        </tr>
+                        @endforeach
+
+                    </table>
+
+                    {{ $stock->links() }}
+                </div>
+                <div class="m-3">
+
+
+                </div>
             </div>
         </div>
 
@@ -153,34 +162,124 @@ NEW
 -->
 
 <script>
-      
-        $(document).ready(function () {
-            
-            $('#tblData').on('click', '.btn-edit', function () { 
-                const num =$(this).parent().parent().parent().find(".tdno").html();
-        $(this).parent().parent().parent().find(".tdno").html("<input type='number' value='"+parseInt(num)+"' class='form-control txtno' placeholder='Enter No'/>"); 
-
-                let item =$(this).parent().parent().parent().find(".tditem").html();
-                item = item.replace(/^\s+|\s+$/g, '');
-                $(this).parent().parent().parent().find(".tditem").html("<input type='text' value='"+item+"' class='form-control txtitem' placeholder='Enter Item'/>"); 
-
-                const qty =$(this).parent().parent().parent().find(".tdqty").html();
-               
-                $(this).parent().parent().parent().find(".tdqty").html("<input type='number' value='"+parseInt(qty)+"' class='form-control txtno' placeholder='Enter Qty'/>"); 
-
-
-                let bar =$(this).parent().parent().parent().find(".tdbar").html();
-               bar = bar.replace(/^\s+|\s+$/g, '');
-                $(this).parent().parent().parent().find(".tdbar").html("<input type='text' value='"+bar+"' class='form-control txtitem' placeholder='Enter Barcode'/>"); 
-
-                $(this).parent().html("<button  class='p-1 btn btn-success btn-sm showDiv btn-update' >Update</button>"); 
-console.log($(this).parent().find(".btn-edit"));
-
-
-                
-            });
+    $(document).ready(function() {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
         });
-    </script> 
+
+        $('#tblData').on('click', '.btn-edit', function() {
+
+            let item = $(this).parent().parent().parent().find(".tditem").html();
+            item = item.replace(/^\s+|\s+$/g, '');
+            $(this).parent().parent().parent().find(".tditem").html("<input type='text' value='" + item + "' class='form-control txtitem' placeholder='Enter Item'/>");
+
+            const qty = $(this).parent().parent().parent().find(".tdqty").html();
+
+            $(this).parent().parent().parent().find(".tdqty").html("<input type='number' value='" + parseInt(qty) + "' class='form-control txtqty' placeholder='Enter Qty'/>");
+
+
+            let bar = $(this).parent().parent().parent().find(".tdbar").html();
+            bar = bar.replace(/^\s+|\s+$/g, '');
+            $(this).parent().parent().parent().find(".tdbar").html("<input type='text' value='" + bar + "' class='form-control txtbar' placeholder='Enter Barcode'/>");
+
+            $(this).parent().html("<button  class='p-1 btn btn-success btn-sm showDiv btn-update' >Update</button>");
+        });
+        $('#tblData').on('click', '.btn-delete', function() {
+
+            const num = parseInt($(this).parent().parent().parent().find(".tdno").html());
+            let item = $(this).parent().parent().parent().find(".tditem").html();
+            item = item.replace(/^\s+|\s+$/g, '');
+            const qty = parseInt($(this).parent().parent().parent().find(".tdqty").html());
+            let bar = $(this).parent().parent().parent().find(".tdbar").html();
+            bar = bar.replace(/^\s+|\s+$/g, '');
+          //  $(this).parent().parent().remove();
+            $.ajax({
+                url: "{{ route('ajaxdelete') }}",
+                method: 'Post',
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    inno: num,
+                    instock: item,
+                    inbarcode: bar,
+                    inqty: qty
+                },
+                success: function(res) {
+                    if (res.status == 'success') {
+                       
+                        $('.data-table').load(location.href + ' .data-table');
+
+
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.log('Error:', error);
+                    console.log('Response:', xhr.responseText);
+                }
+            })
+
+
+
+
+        });
+
+        $('#tblData').on('click', '.btn-update', function() {
+
+            const num = $(this).parent().parent().parent().find(".tdno").html();
+
+            let item = $(this).parent().parent().parent().find(".txtitem").val();
+            item = item.replace(/^\s+|\s+$/g, '');
+            $(this).parent().parent().parent().find(".tditem").html("" + item + "");
+
+            const qty = $(this).parent().parent().parent().find(".txtqty").val();
+            $(this).parent().parent().parent().find(".tdqty").html("" + parseInt(qty) + "");
+
+
+            let bar = $(this).parent().parent().parent().find(".txtbar").val();
+            bar = bar.replace(/^\s+|\s+$/g, '');
+            $(this).parent().parent().parent().find(".tdbar").html("" + bar + "");
+
+            $(this).parent().html("<button  class='p-1 btn btn-warning btn-sm showDiv btn-edit' >Edit</button>");
+
+            $.ajax({
+                url: "{{ route('ajaxedit') }}",
+                method: 'Post',
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    inno: parseInt(num),
+                    instock: item,
+                    inbarcode: bar,
+                    inqty: parseInt(qty)
+                },
+                success: function(res) {
+                    if (res.status == 'success') {
+
+
+
+                        console.log("test");
+
+                        $('.data-table').load(location.href + ' .data-table');
+
+
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.log('Error:', error);
+                    console.log('Response:', xhr.responseText);
+                }
+            })
+
+
+
+
+        });
+
+
+
+
+    });
+</script>
 
 
 @livewireScripts

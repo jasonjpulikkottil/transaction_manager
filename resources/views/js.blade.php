@@ -12,7 +12,6 @@
         $('#inbarcode').off('input').on('input', function(event)
             {
 
-                console.log("testtimer1");
                 setTimeout(function() {
 
 
@@ -20,6 +19,7 @@
                     event.preventDefault();
                 let instock = $('#instock').val();
                 let inbarcode = $('#inbarcode').val();
+
                 let inqty = $('#inqty').val();
 
 
@@ -34,8 +34,11 @@
                     },
                     success: function(res) {
                         if (res.status == 'success') {
+
+
+
                             // console.log("test");
-                            Command: toastr["success"]("Product added Successfully")
+                            //Command: toastr["success"]("Product added Successfully")
                             $('#inbarcode').val('');
                              $('#instock').val('');
                              $('#inqty').val('');
@@ -51,7 +54,6 @@
                     }
                 })
 
-                    console.log("testtimer2");
 
                 }, 2000);
 

@@ -10,8 +10,9 @@ class Stock extends Model
     use HasFactory;
 
     protected $table = 'stock';
-    
-   protected $primaryKey = 'barcode';
+    protected $keyType = 'string';
+    protected $primaryKey = 'barcode';
+  
     public $timestamps = false;
 
     protected $fillable=[

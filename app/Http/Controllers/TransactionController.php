@@ -26,7 +26,8 @@ class TransactionController extends Controller
 
         $stock = Stock::simplePaginate(10);
 
-        return view("admin-dashboard/stock")->with('stock', $stock);
+
+        return view("admin-dashboard/stock")->with(['stock' => $stock]);
     }
 
     public function PurchaseController()
@@ -100,8 +101,8 @@ class TransactionController extends Controller
 
         $stock = Stock::simplePaginate(10);
 
-
-        return view("admin-dashboard/stock")->with(['stock' => $stock]);
+        return redirect('/');
+       // return view("admin-dashboard/stock")->with(['stock' => $stock]);
     }
 
     public function StockExport()
@@ -420,6 +421,7 @@ class TransactionController extends Controller
         $result = DB::table('stock')
             ->where('description', $request->instock)
             ->exists();
+
         if (!$result) {
             DB::table('stock')->insert([
                 'no' => $noValue,
@@ -429,11 +431,11 @@ class TransactionController extends Controller
             ]);
         }
 
+
         $stock = DB::table('stock')->get();
 
         $currentDate = Carbon::today();
         $currentTime = Carbon::now()->format('H:i:s');
-
 
         DB::table('transactionhistory')->insert([
 
@@ -450,15 +452,81 @@ class TransactionController extends Controller
         ]);
         return view("admin-dashboard/stock")->with(['stock' => $stock]);
     }
-
-
-    public function StockEdit($no)
+    public function AjaxEdit(Request $request)
     {
-        $stock= Stock::where('no', '=', $no)->first();
+        $this->validate($request, [
+            'inno' => 'required',
+            'instock' => 'required',
+            'inbarcode' => 'required',
+            'inqty' => 'required',
+        ]);
 
-        return view("admin-dashboard/editstock")->with(['stock' => $stock]);
-        //return redirect('/');
+        $stock = Stock::where('no', $request->inno)->first();
+        if ($stock) {
+            $stock->description = $request->instock;
+            $stock->qty = $request->inqty;
+            $stock->barcode = $request->inbarcode;
+
+            $stock->save();
+        }
+
+
+        $stock = DB::table('stock')->get();
+
+        $currentDate = Carbon::today();
+        $currentTime = Carbon::now()->format('H:i:s');
+
+        DB::table('transactionhistory')->insert([
+
+
+            'trans_date' => $currentDate,
+            'trans_time' => $currentTime,
+            'description' => $request->instock,
+            'qty' => $request->inqty,
+            'info' => "Item Edited"
+        ]);
+
+        return response()->json([
+            'status' => 'success'
+        ]);
+        return view("admin-dashboard/stock")->with(['stock' => $stock]);
     }
+
+    public function AjaxDelete(Request $request)
+    {
+        $this->validate($request, [
+            'inno' => 'required',
+            'instock' => 'required',
+            'inbarcode' => 'required',
+            'inqty' => 'required',
+        ]);
+        $stock = Stock::where('no', $request->inno)->first();
+        if ($stock) {
+            $stock->delete();
+        }
+
+
+        $stock = DB::table('stock')->get();
+
+        $currentDate = Carbon::today();
+        $currentTime = Carbon::now()->format('H:i:s');
+
+        DB::table('transactionhistory')->insert([
+
+
+            'trans_date' => $currentDate,
+            'trans_time' => $currentTime,
+            'description' => $request->instock,
+            'qty' => $request->inqty,
+            'info' => "Item Deleted"
+        ]);
+
+        return response()->json([
+            'status' => 'success'
+        ]);
+        return view("admin-dashboard/stock")->with(['stock' => $stock]);
+    }
+
 
     public function StockDestroy($no)
     {

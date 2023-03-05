@@ -21,6 +21,8 @@ Route::post('/purchasereturn-upload',[TransactionController::class, 'PurchaseRet
 Route::post('/salesreturn-upload',[TransactionController::class, 'SalesReturnUpload']);
 
 Route::post('/ajaxinsert',[TransactionController::class, 'AjaxInsert'])->name('ajaxinsert');
+Route::post('/ajaxedit',[TransactionController::class, 'AjaxEdit'])->name('ajaxedit');
+Route::post('/ajaxdelete',[TransactionController::class, 'AjaxDelete'])->name('ajaxdelete');
 
 Route::post('/stockedit/{no}',[TransactionController::class, 'StockEdit'])->name('stock.edit');
 Route::post('/stockdestroy/{no}',[TransactionController::class, 'StockDestroy'])->name('stock.destroy');
