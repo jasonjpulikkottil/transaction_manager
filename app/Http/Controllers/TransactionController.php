@@ -9,6 +9,8 @@ use App\Imports\StockImport;
 use App\Imports\StockTempImport;
 use App\Exports\StockExport;
 use App\Models\StockTemp;
+use App\Models\Purchase;
+use App\Models\Purchasemismatch;
 use App\Models\TransactionHistory;
 
 use DB;
@@ -24,7 +26,7 @@ class TransactionController extends Controller
         */
         //$stock = DB::table('stock')->get();
 
-        $stock = Stock::simplePaginate(10);
+        $stock = Stock::orderBy('no')->simplePaginate(10);
 
 
         return view("admin-dashboard/stock")->with(['stock' => $stock]);
@@ -33,7 +35,14 @@ class TransactionController extends Controller
     public function PurchaseController()
     {
 
-        return view("admin-dashboard/purchase");
+        //return view("admin-dashboard/purchase");
+
+
+        $purchase = Purchase::simplePaginate(10);
+        //$purchasemismatch = Purchasemismatch::simplePaginate(10);
+        $purchasemismatch = DB::table('purchasemismatch')->get();
+
+        return view("admin-dashboard/purchase")->with(['purchase' => $purchase, 'purchasemismatch' => $purchasemismatch]);
     }
 
     public function SalesController()
@@ -102,7 +111,7 @@ class TransactionController extends Controller
         $stock = Stock::simplePaginate(10);
 
         return redirect('/');
-       // return view("admin-dashboard/stock")->with(['stock' => $stock]);
+        // return view("admin-dashboard/stock")->with(['stock' => $stock]);
     }
 
     public function StockExport()
@@ -167,8 +176,9 @@ class TransactionController extends Controller
     public function PurchaseUpload(Request $request)
     {
 
-
         StockTemp::truncate();
+        Purchase::truncate();
+        Purchasemismatch::truncate();
 
         Excel::import(new StockTempImport, request()->file('purchasefile'));
 
@@ -179,6 +189,16 @@ class TransactionController extends Controller
 
 
         foreach ($stocktemp as $order) {
+
+            DB::table('purchase')->insert([
+                'no' => $order->no,
+                'description' => $order->description,
+                'qty' => $order->qty,
+                'barcode' => $order->barcode,
+
+
+            ]);
+
             $stock2 = DB::table('stock')->where('description', $order->description)->first();
 
             DB::table('stock')->where('description', $order->description)->increment('qty', $order->qty);
@@ -224,7 +244,10 @@ class TransactionController extends Controller
             ]);
         }
 
-        return view("admin-dashboard/stock")->with(['stock' => $stock, 'stocktemp' => $stocktemp]);
+
+
+        return redirect('/purchase');
+        // return view("admin-dashboard/stock")->with(['stock' => $stock, 'stocktemp' => $stocktemp]);
     }
 
 
@@ -454,6 +477,7 @@ class TransactionController extends Controller
     }
     public function AjaxEdit(Request $request)
     {
+        error_log('Some message here.');
         $this->validate($request, [
             'inno' => 'required',
             'instock' => 'required',
@@ -470,6 +494,7 @@ class TransactionController extends Controller
             $stock->save();
         }
 
+       
 
         $stock = DB::table('stock')->get();
 
@@ -526,6 +551,83 @@ class TransactionController extends Controller
         ]);
         return view("admin-dashboard/stock")->with(['stock' => $stock]);
     }
+
+    public function AjaxCheck(Request $request)
+    {
+        $this->validate($request, [
+            'inbarcode' => 'required',
+        ]);
+
+        $varitem = "";
+        $varqty = 0;
+        $inputString = $request->inbarcode;
+        $numSlashes = substr_count($inputString, '/');
+
+        if ($numSlashes >= 6) {
+            $splittedString = explode('/', $inputString);
+            $varitem = str_replace(' ', '', $splittedString[3]);
+            $varqty = intval(ltrim(trim($splittedString[4]), '0'));
+        }
+
+        $result = DB::table('purchase')
+            ->where('description', $varitem)
+            ->where('qty', $varqty)
+            ->exists();
+        if ($result) {
+            $row = Purchase::where('description', $varitem)->first();
+            $row->delete();
+        }
+
+        $result2 = DB::table('purchase')
+            ->where('description', $varitem)
+            ->where('qty', '>', $varqty)
+            ->exists();
+        if ($result2) {
+            
+            $qtypurchase = DB::table('purchase')->where('description', $varitem)->value('qty');
+            $netqty =  $qtypurchase - $varqty;
+            DB::table('purchase')->where('description', $varitem)->decrement('qty', $netqty);
+        }
+        $result3 = DB::table('purchase')
+        ->where('description', $varitem)
+        ->where('qty', '<', $varqty)
+        ->exists();
+    if ($result3) {
+        $noValue = DB::table('purchasemismatch')->orderBy('no', 'desc')->value('no');
+        $noValue += 1;
+
+        $qtypurchase = DB::table('purchase')->where('description', $varitem)->value('qty');
+        $netqty =  $varqty-$qtypurchase ;
+        DB::table('purchase')->where('description', $varitem)->increment('qty', $netqty);
+
+        DB::table('purchasemismatch')->insert([
+            'no' => $noValue,
+            'description' => $varitem,
+            'qty' =>  $netqty,
+            'barcode' => $request->inbarcode,
+        ]);
+        }
+        $result4 = DB::table('purchase')
+        ->where('description', $varitem)
+        ->exists();
+        if (!$result4) {
+            $noValue = DB::table('purchasemismatch')->orderBy('no', 'desc')->value('no');
+            $noValue += 1;
+    
+            DB::table('purchasemismatch')->insert([
+                'no' => $noValue,
+                'description' => $varitem,
+                'qty' =>  $varqty,
+                'barcode' => $request->inbarcode,
+            ]);
+            }
+
+        return response()->json([
+            'status' => 'success'
+        ]);
+        //return view("admin-dashboard/stock")->with(['stock' => $stock]);
+    }
+
 
 
     public function StockDestroy($no)

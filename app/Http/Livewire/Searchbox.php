@@ -31,6 +31,7 @@ class Searchbox extends Component
 
                         $this->searchbar ="";
                        }
+                       $this->searchqty ="";
              $this->showdiv = true;
          }else{
              $this->showdiv = false;

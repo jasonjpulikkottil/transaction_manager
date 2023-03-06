@@ -184,7 +184,7 @@ NEW
             bar = bar.replace(/^\s+|\s+$/g, '');
             $(this).parent().parent().parent().find(".tdbar").html("<input type='text' value='" + bar + "' class='form-control txtbar' placeholder='Enter Barcode'/>");
 
-            $(this).parent().html("<button  class='p-1 btn btn-success btn-sm showDiv btn-update' >Update</button>");
+            $(this).parent().parent().html("<button  class='w-100 p-1 btn btn-success btn-sm showDiv btn-update' >Update</button>");
         });
         $('#tblData').on('click', '.btn-delete', function() {
 
@@ -226,22 +226,23 @@ NEW
 
         $('#tblData').on('click', '.btn-update', function() {
 
-            const num = $(this).parent().parent().parent().find(".tdno").html();
+            const num = $(this).parent().parent().find(".tdno").html();
 
             let item = $(this).parent().parent().parent().find(".txtitem").val();
             item = item.replace(/^\s+|\s+$/g, '');
-            $(this).parent().parent().parent().find(".tditem").html("" + item + "");
+            //$(this).parent().parent().parent().find(".tditem").html("" + item + "");
 
             const qty = $(this).parent().parent().parent().find(".txtqty").val();
-            $(this).parent().parent().parent().find(".tdqty").html("" + parseInt(qty) + "");
+            //$(this).parent().parent().parent().find(".tdqty").html("" + parseInt(qty) + "");
 
 
             let bar = $(this).parent().parent().parent().find(".txtbar").val();
             bar = bar.replace(/^\s+|\s+$/g, '');
-            $(this).parent().parent().parent().find(".tdbar").html("" + bar + "");
+           // $(this).parent().parent().parent().find(".tdbar").html("" + bar + "");
 
-            $(this).parent().html("<button  class='p-1 btn btn-warning btn-sm showDiv btn-edit' >Edit</button>");
 
+           $(this).parent().html("<td class='d-flex flex-fill'><div class='p-1'><button class='p-1 btn btn-warning btn-sm showDiv btn-edit'>Edit</button></div><div class='p-1'><button class='btn btn-danger btn-sm btn-delete'>Delete</button></div></td>");
+      
             $.ajax({
                 url: "{{ route('ajaxedit') }}",
                 method: 'Post',
@@ -255,9 +256,6 @@ NEW
                 success: function(res) {
                     if (res.status == 'success') {
 
-
-
-                        console.log("test");
 
                         $('.data-table').load(location.href + ' .data-table');
 

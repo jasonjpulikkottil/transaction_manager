@@ -34,7 +34,7 @@
                                 <th>No</th>
                                 <th>Date</th>
                                 <th>Time</th>
-                                <th>Stock</th>
+                                <th>Item</th>
                                 <th>Qty of change</th>
                                 <th>Change Info</th>
                                 
