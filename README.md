@@ -1,4 +1,4 @@
-# transaction manager
+# Transaction manager
  PHP Laravel 10 Project
  
 * Admin portal with 5 options
