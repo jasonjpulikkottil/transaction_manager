@@ -20,12 +20,7 @@ use Carbon\Carbon;
 class TransactionController extends Controller
 {
     public function StockController()
-    {   /*
-        Stock::truncate();
-        TransactionHistory::truncate();
-        */
-        //$stock = DB::table('stock')->get();
-
+    {   
         $stock = Stock::orderBy('no')->simplePaginate(10);
 
 
@@ -35,11 +30,9 @@ class TransactionController extends Controller
     public function PurchaseController()
     {
 
-        //return view("admin-dashboard/purchase");
-
-
+        
         $purchase = Purchase::simplePaginate(10);
-        //$purchasemismatch = Purchasemismatch::simplePaginate(10);
+     
         $purchasemismatch = DB::table('purchasemismatch')->get();
 
         return view("admin-dashboard/purchase")->with(['purchase' => $purchase, 'purchasemismatch' => $purchasemismatch]);
@@ -477,7 +470,7 @@ class TransactionController extends Controller
     }
     public function AjaxEdit(Request $request)
     {
-        error_log('Some message here.');
+        //error_log('Some message here.');
         $this->validate($request, [
             'inno' => 'required',
             'instock' => 'required',
@@ -573,44 +566,48 @@ class TransactionController extends Controller
             ->where('description', $varitem)
             ->where('qty', $varqty)
             ->exists();
-        if ($result) {
-            $row = Purchase::where('description', $varitem)->first();
-            $row->delete();
-        }
+        
 
         $result2 = DB::table('purchase')
             ->where('description', $varitem)
             ->where('qty', '>', $varqty)
             ->exists();
-        if ($result2) {
+        
+        $result3 = DB::table('purchase')
+        ->where('description', $varitem)
+        ->where('qty', '<', $varqty)
+        ->exists();
+  
+        $result4 = DB::table('purchase')
+        ->where('description', $varitem)
+        ->exists();
+
+        if ($result) {
+            $row = Purchase::where('description', $varitem)->first();
+            $row->delete();
+        }
+       else if ($result2) {
             
             $qtypurchase = DB::table('purchase')->where('description', $varitem)->value('qty');
             $netqty =  $qtypurchase - $varqty;
             DB::table('purchase')->where('description', $varitem)->decrement('qty', $netqty);
         }
-        $result3 = DB::table('purchase')
-        ->where('description', $varitem)
-        ->where('qty', '<', $varqty)
-        ->exists();
-    if ($result3) {
-        $noValue = DB::table('purchasemismatch')->orderBy('no', 'desc')->value('no');
-        $noValue += 1;
-
-        $qtypurchase = DB::table('purchase')->where('description', $varitem)->value('qty');
-        $netqty =  $varqty-$qtypurchase ;
-        DB::table('purchase')->where('description', $varitem)->increment('qty', $netqty);
-
-        DB::table('purchasemismatch')->insert([
-            'no' => $noValue,
-            'description' => $varitem,
-            'qty' =>  $netqty,
-            'barcode' => $request->inbarcode,
-        ]);
-        }
-        $result4 = DB::table('purchase')
-        ->where('description', $varitem)
-        ->exists();
-        if (!$result4) {
+       else if ($result3) {
+            $noValue = DB::table('purchasemismatch')->orderBy('no', 'desc')->value('no');
+            $noValue += 1;
+    
+            $qtypurchase = DB::table('purchase')->where('description', $varitem)->value('qty');
+            $netqty =  $varqty-$qtypurchase ;
+            DB::table('purchase')->where('description', $varitem)->increment('qty', $netqty);
+    
+            DB::table('purchasemismatch')->insert([
+                'no' => $noValue,
+                'description' => $varitem,
+                'qty' =>  $netqty,
+                'barcode' => $request->inbarcode,
+            ]);
+            }
+        else if (!$result4) {
             $noValue = DB::table('purchasemismatch')->orderBy('no', 'desc')->value('no');
             $noValue += 1;
     
@@ -625,7 +622,6 @@ class TransactionController extends Controller
         return response()->json([
             'status' => 'success'
         ]);
-        //return view("admin-dashboard/stock")->with(['stock' => $stock]);
     }
 
 

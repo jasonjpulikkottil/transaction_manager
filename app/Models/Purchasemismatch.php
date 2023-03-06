@@ -9,7 +9,7 @@ class Purchasemismatch extends Model
 {
     use HasFactory;
 
-    protected $table = 'purchase';
+    protected $table = 'purchasemismatch';
     protected $keyType = 'string';
     protected $primaryKey = 'barcode';
   
