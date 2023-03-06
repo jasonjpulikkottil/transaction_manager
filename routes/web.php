@@ -25,7 +25,4 @@ Route::post('/ajaxedit',[TransactionController::class, 'AjaxEdit'])->name('ajaxe
 Route::post('/ajaxdelete',[TransactionController::class, 'AjaxDelete'])->name('ajaxdelete');
 Route::post('/ajaxcheck',[TransactionController::class, 'AjaxCheck'])->name('ajaxcheck');
 
-//Route::post('/stockedit/{no}',[TransactionController::class, 'StockEdit'])->name('stock.edit');
-//Route::post('/stockdestroy/{no}',[TransactionController::class, 'StockDestroy'])->name('stock.destroy');
-
 

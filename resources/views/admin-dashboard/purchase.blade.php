@@ -103,7 +103,7 @@
                         </div>
                         <div class="m-3">
 
-                            <h5>Mismatch Items</h5>
+                            <h5>Mismatched Items</h5>
                             <table id="tblmis" class="table-bordered table-responsive text-center check-table">
                                 <tr>
                                     <th>No</th>
