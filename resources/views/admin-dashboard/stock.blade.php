@@ -241,7 +241,7 @@ NEW
            // $(this).parent().parent().parent().find(".tdbar").html("" + bar + "");
 
 
-           $(this).parent().html("<td class='d-flex flex-fill'><div class='p-1'><button class='p-1 btn btn-warning btn-sm showDiv btn-edit'>Edit</button></div><div class='p-1'><button class='btn btn-danger btn-sm btn-delete'>Delete</button></div></td>");
+          // $(this).parent().html("<td class='d-flex flex-fill'><div class='p-1'><button class='p-1 btn btn-warning btn-sm showDiv btn-edit'>Edit</button></div><div class='p-1'><button class='btn btn-danger btn-sm btn-delete'>Delete</button></div></td>");
       
             $.ajax({
                 url: "{{ route('ajaxedit') }}",
