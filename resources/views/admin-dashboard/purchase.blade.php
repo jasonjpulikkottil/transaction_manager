@@ -138,7 +138,43 @@
                             </table>
 
                         </div>
+                        <div class="m-3">
 
+<h5>Scanned Items</h5>
+<table id="tblmis" class="table-bordered table-responsive text-center scan-table">
+    <tr>
+        <th>No</th>
+        <th>Description of Goods</th>
+        <th>Qty</th>
+        <th>Barcode</th>
+
+    </tr>
+
+    @foreach ($scanneditems as $key3 => $data3)
+
+    <tr  style="background-color:  {{$data3->color}};">
+        <td class="tdno">
+            {{$data3->no}}
+        </td>
+        <td class="tditem">
+            {{$data3->description}}
+        </td>
+        <td class="tdqty">
+            {{$data3->qty}}
+        </td>
+        <td class="tdbar">
+            {{$data3->barcode}}
+
+        </td>
+
+
+
+    </tr>
+    @endforeach
+
+</table>
+
+</div>
 
                         <div class="m-3">
 
@@ -213,6 +249,7 @@
                                 $('#scanbarcode').val('');
                                 $('.data-table').load(location.href + ' .data-table');
                                 $('.check-table').load(location.href + ' .check-table');
+                                $('.scan-table').load(location.href + ' .scan-table');
 
 
                             }

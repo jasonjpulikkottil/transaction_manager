@@ -12,7 +12,7 @@ use App\Models\StockTemp;
 use App\Models\Purchase;
 use App\Models\Purchasemismatch;
 use App\Models\TransactionHistory;
-
+use App\Models\Scanneditems;
 use DB;
 use LDAP\Result;
 use Carbon\Carbon;
@@ -20,7 +20,7 @@ use Carbon\Carbon;
 class TransactionController extends Controller
 {
     public function StockController()
-    {   
+    {
         $stock = Stock::orderBy('no')->simplePaginate(10);
 
 
@@ -30,12 +30,15 @@ class TransactionController extends Controller
     public function PurchaseController()
     {
 
-        
-        $purchase = Purchase::simplePaginate(10);
-     
-        $purchasemismatch = DB::table('purchasemismatch')->get();
 
-        return view("admin-dashboard/purchase")->with(['purchase' => $purchase, 'purchasemismatch' => $purchasemismatch]);
+        $purchase = Purchase::simplePaginate(10);
+
+        $purchasemismatch = DB::table('purchasemismatch')->get();
+        $scanneditems = DB::table('scanneditems')->get();
+
+
+
+        return view("admin-dashboard/purchase")->with(['purchase' => $purchase, 'scanneditems' => $scanneditems, 'purchasemismatch' => $purchasemismatch]);
     }
 
     public function SalesController()
@@ -487,7 +490,7 @@ class TransactionController extends Controller
             $stock->save();
         }
 
-       
+
 
         $stock = DB::table('stock')->get();
 
@@ -566,58 +569,104 @@ class TransactionController extends Controller
             ->where('description', $varitem)
             ->where('qty', $varqty)
             ->exists();
-        
+
 
         $result2 = DB::table('purchase')
             ->where('description', $varitem)
             ->where('qty', '>', $varqty)
             ->exists();
-        
+
         $result3 = DB::table('purchase')
-        ->where('description', $varitem)
-        ->where('qty', '<', $varqty)
-        ->exists();
-  
+            ->where('description', $varitem)
+            ->where('qty', '<', $varqty)
+            ->exists();
+
         $result4 = DB::table('purchase')
-        ->where('description', $varitem)
-        ->exists();
+            ->where('description', $varitem)
+            ->exists();
 
         if ($result) {
             $row = Purchase::where('description', $varitem)->first();
             $row->delete();
-        }
-       else if ($result2) {
-            
+
+            $nValue = DB::table('scanneditems')->orderBy('no', 'desc')->value('no');
+            $nValue += 1;
+            /*
+            DB::table('scanneditems')->insert([
+                'no' => $nValue,
+                'description' => $varitem,
+                'qty' =>  $varqty,
+                'barcode' => $request->inbarcode,
+                'color' => "yellow"
+            ]);
+*/
+            $scanneditem = new Scanneditems;
+            $scanneditem->no = $nValue;
+            $scanneditem->description =  $varitem;
+            $scanneditem->qty = $varqty;
+            $scanneditem->barcode = $request->inbarcode;
+            $scanneditem->color = "white";
+            $scanneditem->save();
+        } else if ($result2) {
+
             $qtypurchase = DB::table('purchase')->where('description', $varitem)->value('qty');
             $netqty =  $qtypurchase - $varqty;
             DB::table('purchase')->where('description', $varitem)->decrement('qty', $netqty);
-        }
-       else if ($result3) {
+
+            $nValue = DB::table('scanneditems')->orderBy('no', 'desc')->value('no');
+            $nValue += 1;
+            $scanneditem = new Scanneditems;
+            $scanneditem->no = $nValue;
+            $scanneditem->description =  $varitem;
+            $scanneditem->qty = $varqty;
+            $scanneditem->barcode = $request->inbarcode;
+            $scanneditem->color = "red";
+            $scanneditem->save();
+        } else if ($result3) {
             $noValue = DB::table('purchasemismatch')->orderBy('no', 'desc')->value('no');
             $noValue += 1;
-    
+
             $qtypurchase = DB::table('purchase')->where('description', $varitem)->value('qty');
-            $netqty =  $varqty-$qtypurchase ;
+            $netqty =  $varqty - $qtypurchase;
             DB::table('purchase')->where('description', $varitem)->increment('qty', $netqty);
-    
+
             DB::table('purchasemismatch')->insert([
                 'no' => $noValue,
                 'description' => $varitem,
                 'qty' =>  $netqty,
                 'barcode' => $request->inbarcode,
             ]);
-            }
-        else if (!$result4) {
+
+            $nValue = DB::table('scanneditems')->orderBy('no', 'desc')->value('no');
+            $nValue += 1;
+            $scanneditem = new Scanneditems;
+            $scanneditem->no = $nValue;
+            $scanneditem->description =  $varitem;
+            $scanneditem->qty = $varqty;
+            $scanneditem->barcode = $request->inbarcode;
+            $scanneditem->color = "green";
+            $scanneditem->save();
+        } else if (!$result4) {
             $noValue = DB::table('purchasemismatch')->orderBy('no', 'desc')->value('no');
             $noValue += 1;
-    
+
             DB::table('purchasemismatch')->insert([
                 'no' => $noValue,
                 'description' => $varitem,
                 'qty' =>  $varqty,
                 'barcode' => $request->inbarcode,
             ]);
-            }
+
+            $nValue = DB::table('scanneditems')->orderBy('no', 'desc')->value('no');
+            $nValue += 1;
+            $scanneditem = new Scanneditems;
+            $scanneditem->no = $nValue;
+            $scanneditem->description =  $varitem;
+            $scanneditem->qty = $varqty;
+            $scanneditem->barcode = $request->inbarcode;
+            $scanneditem->color = "yellow";
+            $scanneditem->save();
+        }
 
         return response()->json([
             'status' => 'success'
