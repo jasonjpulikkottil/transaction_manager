@@ -1,7 +1,7 @@
 # Transaction manager
  PHP Laravel 10 Project
  
-* Admin portal with 5 options
+#### Admin portal with 5 options
 1. Stock
 2. Sales
 3. Purchase
