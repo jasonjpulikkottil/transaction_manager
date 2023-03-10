@@ -59,20 +59,23 @@
                     </div>
                 </div>
 
-                <div class="card card-primary card-outline">
-                    <div class="card-header">
-                        <h5 class="m-0">View purchase</h5>
-                    </div>
-                    <div class="card-body d-flex">
-                        <div class="m-3">
-                            <h5>Uploaded Items</h5>
-                            <table id="tblData" class="table-bordered table-responsive text-center data-table">
+                
+
+<!-- NEW -->
+ <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Uploaded Items</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+              <table id="tblData" class="table table-bordered data-table">
                                 <tr>
                                     <th>No</th>
                                     <th>Description of Goods</th>
                                     <th>Qty</th>
-                                    <th>Barcode</th>
-
                                 </tr>
 
                                 @foreach ($purchase as $key => $data)
@@ -87,10 +90,6 @@
                                     <td class="tdqty">
                                         {{$data->qty}}
                                     </td>
-                                    <td class="tdbar">
-                                        {{$data->barcode}}
-
-                                    </td>
 
 
 
@@ -100,16 +99,28 @@
                             </table>
 
                             {{ $purchase->links() }}
-                        </div>
-                        <div class="m-3">
+              </div>
+              <!-- /.card-body -->
+              
+            </div>
+            <!-- /.card -->
 
-                            <h5>Mismatched Items</h5>
-                            <table id="tblmis" class="table-bordered table-responsive text-center check-table">
+            
+          </div>
+          <!-- /.col -->
+		  
+		  <div class="col-md-4">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Incorrectly Picked Items </h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+              <table id="tblmis" class="table table-bordered check-table">
                                 <tr>
                                     <th>No</th>
                                     <th>Description of Goods</th>
                                     <th>Extra Qty</th>
-                                    <th>Barcode</th>
 
                                 </tr>
 
@@ -125,10 +136,6 @@
                                     <td class="tdqty">
                                         {{$data2->qty}}
                                     </td>
-                                    <td class="tdbar">
-                                        {{$data2->barcode}}
-
-                                    </td>
 
 
 
@@ -136,17 +143,29 @@
                                 @endforeach
 
                             </table>
+              </div>
+              <!-- /.card-body -->
+              
+              <!-- /.card-body -->
 
-                        </div>
-                        <div class="m-3">
+            </div>
+            <!-- /.card -->
 
-<h5>Scanned Items</h5>
-<table id="tblmis" class="table-bordered table-responsive text-center scan-table">
+          </div>
+          <!-- /.col -->
+         
+		  <div class="col-md-4">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Scanned Items</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+              <table id="tblmis" class="table table-bordered scan-table">
     <tr>
         <th>No</th>
         <th>Description of Goods</th>
         <th>Qty</th>
-        <th>Barcode</th>
 
     </tr>
 
@@ -162,26 +181,34 @@
         <td class="tdqty">
             {{$data3->qty}}
         </td>
-        <td class="tdbar">
-            {{$data3->barcode}}
-
-        </td>
-
-
 
     </tr>
     @endforeach
 
 </table>
+              </div>
+              <!-- /.card-body -->
+              
+            </div>
+            <!-- /.card -->
+
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+     
+   
+      </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+<!-- NEW -->
 
 </div>
 
-                        <div class="m-3">
 
 
-                        </div>
-                    </div>
-                </div>
+
 
 
 

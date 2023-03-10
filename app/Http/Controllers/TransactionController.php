@@ -14,7 +14,6 @@ use App\Models\Purchasemismatch;
 use App\Models\TransactionHistory;
 use App\Models\Scanneditems;
 use DB;
-use LDAP\Result;
 use Carbon\Carbon;
 
 class TransactionController extends Controller
@@ -175,6 +174,7 @@ class TransactionController extends Controller
         StockTemp::truncate();
         Purchase::truncate();
         Purchasemismatch::truncate();
+        Scanneditems::truncate();
 
         Excel::import(new StockTempImport, request()->file('purchasefile'));
 
