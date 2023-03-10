@@ -563,6 +563,8 @@ class TransactionController extends Controller
             $splittedString = explode('/', $inputString);
             $varitem = str_replace(' ', '', $splittedString[3]);
             $varqty = intval(ltrim(trim($splittedString[4]), '0'));
+        }else {
+            return response()->json(['error' => 'Missing required parameters'], 400);
         }
 
         $result = DB::table('purchase')
